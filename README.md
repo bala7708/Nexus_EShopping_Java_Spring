@@ -681,14 +681,34 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 ---
 
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
----
-
-## 👨‍💻 Author
+## 👨‍💻 Author-GB
 
 Built with Spring Boot 3, Spring Security, JPA/Hibernate, Thymeleaf, and custom CSS.
 
 > ⭐ If you found this project helpful, consider starring the repository!
+>
+> OUTPUT
+>
+><img width="3000" height="2000" alt="Admin" src="https://github.com/user-attachments/assets/5f3fa802-8962-4b02-b8c2-ef902d979627" />
+
+<img width="3000" height="2000" alt="Buy_Now " src="https://github.com/user-attachments/assets/2bab16bb-1d52-4fa6-8aeb-156365257ba2" />
+
+<img width="3000" height="2000" alt="dashboard" src="https://github.com/user-attachments/assets/aa45ebf7-5c5d-4ea3-a0a9-c2c72578b24a" />
+
+<img width="3000" height="2000" alt="my_orders" src="https://github.com/user-attachments/assets/7973a977-cbd8-4896-86b7-2a9e8a66e616" />
+
+<img width="3000" height="2000" alt="new_user" src="https://github.com/user-attachments/assets/28985b80-908d-4e2d-9e48-90ceebc7ff10" />
+
+<img width="3000" height="2000" alt="oders" src="https://github.com/user-attachments/assets/c98a1f8f-c7a5-4112-9c23-f5d37d71dd0c" />
+
+<img width="3000" height="2000" alt="Products" src="https://github.com/user-attachments/assets/f4cb7dd1-c688-4a25-a104-14be61168d4b" />
+
+<img width="3000" height="2000" alt="sign-in" src="https://github.com/user-attachments/assets/4a71f047-d2fc-457d-a9b3-593d53371c97" />
+
+
+
+
+
+
+
+
