@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account — NEXUS</title>
+  <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+<div class="auth-wrapper">
+  <div class="auth-card fade-in" style="max-width:520px">
+    <div class="auth-logo">NEXUS</div>
+    <p class="auth-tagline">Join the community.</p>
+
+    <form th:action="@{/auth/register}" method="post" th:object="${user}">
+
+      <div class="grid-2" style="gap:1rem">
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          <input type="text" th:field="*{firstName}" class="form-control" placeholder="Jane" required>
+          <p class="form-error" th:errors="*{firstName}"></p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          <input type="text" th:field="*{lastName}" class="form-control" placeholder="Doe" required>
+          <p class="form-error" th:errors="*{lastName}"></p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" th:field="*{email}" class="form-control" placeholder="you@example.com" required>
+        <p class="form-error" th:errors="*{email}"></p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" th:field="*{password}" class="form-control" placeholder="Min 6 characters" required>
+        <p class="form-error" th:errors="*{password}"></p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Phone (optional)</label>
+        <input type="tel" th:field="*{phone}" class="form-control" placeholder="+1 555-0000">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Shipping Address (optional)</label>
+        <textarea th:field="*{address}" class="form-control" placeholder="123 Main St, City, State" rows="2"></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full btn-lg mt-2">
+        Create Account
+      </button>
+    </form>
+
+    <div class="auth-divider">or</div>
+
+    <div style="text-align:center; font-size:0.875rem; color:var(--text-secondary)">
+      Already have an account?
+      <a th:href="@{/auth/login}" style="color:var(--accent-gold); font-weight:600"> Sign in →</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

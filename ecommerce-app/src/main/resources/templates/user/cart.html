@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Cart — NEXUS</title>
+  <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+
+<nav class="navbar">
+  <a th:href="@{/shop}" class="navbar-brand">NEX<span>US</span></a>
+  <ul class="navbar-nav">
+    <li><a th:href="@{/shop}" class="nav-link">Shop</a></li>
+    <li sec:authorize="isAuthenticated()"><a th:href="@{/orders}" class="nav-link">My Orders</a></li>
+    <li sec:authorize="isAuthenticated()"><a th:href="@{/auth/logout}" class="nav-link">Sign Out</a></li>
+    <li><a th:href="@{/cart}" class="nav-cart-btn" style="color:var(--accent-gold)">🛒 Cart
+      <span class="cart-badge" th:if="${cartCount > 0}" th:text="${cartCount}"></span>
+    </a></li>
+  </ul>
+</nav>
+
+<div class="container main-content">
+
+  <div class="page-header">
+    <h1 class="page-title">Your Cart</h1>
+    <p class="page-subtitle" th:text="${cartItems.size()} + ' item(s) · ' + ${cartCount} + ' units'"></p>
+  </div>
+
+  <div th:if="${!cartItems.isEmpty()}">
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:2rem;align-items:start">
+
+      <!-- Cart Items -->
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <span style="font-weight:600">Items</span>
+            <form th:action="@{/cart/clear}" method="post">
+              <button type="submit" class="btn btn-danger btn-sm"
+                      onclick="return confirm('Clear entire cart?')">Clear All</button>
+            </form>
+          </div>
+          <div class="card-body" style="padding:0 1.5rem">
+            <div th:each="item : ${cartItems}" class="cart-item">
+              <img th:if="${item.imageUrl != null}" th:src="${item.imageUrl}"
+                   th:alt="${item.productName}" class="cart-item-img">
+              <div class="img-placeholder cart-item-img" th:if="${item.imageUrl == null}">📦</div>
+
+              <div class="cart-item-info">
+                <div class="cart-item-name" th:text="${item.productName}">Item</div>
+                <div class="cart-item-price">
+                  <span th:text="'$' + ${#numbers.formatDecimal(item.unitPrice,1,2)}"></span>
+                  <span style="color:var(--text-muted)"> × <span th:text="${item.quantity}"></span></span>
+                </div>
+              </div>
+
+              <div class="flex-gap" style="align-items:center">
+                <!-- Qty Controls -->
+                <div style="display:flex;flex-direction:column;gap:0.5rem">
+                  <form th:action="@{/cart/update/{id}(id=${item.productId})}" method="post">
+                    <div class="qty-control">
+                      <button type="submit" name="quantity" th:value="${item.quantity - 1}" class="qty-btn">−</button>
+                      <span class="qty-value" th:text="${item.quantity}">1</span>
+                      <button type="submit" name="quantity" th:value="${item.quantity + 1}" class="qty-btn">+</button>
+                    </div>
+                  </form>
+                </div>
+
+                <!-- Subtotal -->
+                <div style="min-width:80px;text-align:right">
+                  <div style="font-weight:700;color:var(--accent-gold)"
+                       th:text="'$' + ${#numbers.formatDecimal(item.subtotal,1,2)}"></div>
+                </div>
+
+                <!-- Remove -->
+                <form th:action="@{/cart/remove/{id}(id=${item.productId})}" method="post">
+                  <button type="submit" class="btn btn-danger btn-sm" title="Remove">✕</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <a th:href="@{/shop}" class="btn btn-outline mt-2">← Continue Shopping</a>
+      </div>
+
+      <!-- Summary -->
+      <div class="summary-box">
+        <h3 style="margin-bottom:1.25rem">Order Summary</h3>
+
+        <div th:each="item : ${cartItems}" class="summary-row">
+          <span style="color:var(--text-secondary);font-size:0.85rem">
+            <span th:text="${item.productName}"></span>
+            <span style="color:var(--text-muted)"> ×<span th:text="${item.quantity}"></span></span>
+          </span>
+          <span th:text="'$' + ${#numbers.formatDecimal(item.subtotal,1,2)}"></span>
+        </div>
+
+        <div class="summary-row">
+          <span style="color:var(--text-secondary)">Shipping</span>
+          <span style="color:#50c864">Free</span>
+        </div>
+
+        <div class="summary-row total">
+          <span>Total</span>
+          <span th:text="'$' + ${#numbers.formatDecimal(cartTotal,1,2)}"></span>
+        </div>
+
+        <!-- Checkout CTA -->
+        <div style="margin-top:1.5rem;display:flex;flex-direction:column;gap:0.75rem">
+          <!-- Logged in: go to checkout -->
+          <a th:href="@{/cart/checkout}" class="btn btn-primary btn-full btn-lg"
+             sec:authorize="isAuthenticated()">
+            Proceed to Checkout →
+          </a>
+          <!-- Guest: prompt login -->
+          <div sec:authorize="!isAuthenticated()">
+            <a th:href="@{/auth/login}" class="btn btn-primary btn-full btn-lg">
+              Sign In to Checkout →
+            </a>
+            <p style="text-align:center;font-size:0.8rem;color:var(--text-muted);margin-top:0.5rem">
+              or <a th:href="@{/auth/register}" style="color:var(--accent-gold)">create a free account</a>
+            </p>
+          </div>
+        </div>
+
+        <!-- Trust badges -->
+        <div style="display:flex;justify-content:center;gap:1.5rem;margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--border-subtle)">
+          <div style="text-align:center">
+            <div>🔒</div><div style="font-size:0.7rem;color:var(--text-muted)">Secure</div>
+          </div>
+          <div style="text-align:center">
+            <div>🚚</div><div style="font-size:0.7rem;color:var(--text-muted)">Free Ship</div>
+          </div>
+          <div style="text-align:center">
+            <div>🔄</div><div style="font-size:0.7rem;color:var(--text-muted)">Returns</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty Cart -->
+  <div class="empty-state" th:if="${cartItems.isEmpty()}">
+    <div class="empty-icon">🛒</div>
+    <div class="empty-title">Your cart is empty</div>
+    <p class="empty-desc">Looks like you haven't added anything yet.</p>
+    <a th:href="@{/shop}" class="btn btn-primary">Start Shopping</a>
+  </div>
+
+</div>
+</body>
+</html>

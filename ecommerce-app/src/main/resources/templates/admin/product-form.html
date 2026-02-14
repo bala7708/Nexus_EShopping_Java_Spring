@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Product Form — Admin NEXUS</title>
+  <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+
+<nav class="navbar">
+  <a th:href="@{/admin}" class="navbar-brand">NEX<span>US</span> <span style="font-size:0.75rem; color:var(--text-muted); font-family:'DM Sans',sans-serif; font-weight:400; margin-left:0.5rem">Admin</span></a>
+  <ul class="navbar-nav">
+    <li><a th:href="@{/admin/products}" class="nav-link">← Products</a></li>
+  </ul>
+</nav>
+
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Overview</div>
+      <a th:href="@{/admin}" class="sidebar-link"><span class="icon">📊</span> Dashboard</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Catalog</div>
+      <a th:href="@{/admin/products}" class="sidebar-link active"><span class="icon">📦</span> Products</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Commerce</div>
+      <a th:href="@{/admin/orders}" class="sidebar-link"><span class="icon">🛍</span> Orders</a>
+      <a th:href="@{/admin/users}" class="sidebar-link"><span class="icon">👥</span> Users</a>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="flex-between mb-4">
+      <h2 class="font-serif" style="font-size:1.75rem"
+          th:text="${product.id != null} ? 'Edit Product' : 'New Product'">Product Form</h2>
+      <a th:href="@{/admin/products}" class="btn btn-outline">Cancel</a>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 320px; gap:2rem; align-items:start">
+
+      <!-- Form -->
+      <div class="card fade-in">
+        <div class="card-body">
+          <form th:action="${product.id != null} ? @{/admin/products/update/{id}(id=${product.id})} : @{/admin/products/save}"
+                method="post" th:object="${product}">
+
+            <div class="grid-2" style="gap:1rem">
+              <div class="form-group" style="grid-column:1/-1">
+                <label class="form-label">Product Name *</label>
+                <input type="text" th:field="*{name}" class="form-control"
+                       placeholder="e.g. Premium Leather Wallet" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Price (USD) *</label>
+                <input type="number" th:field="*{price}" class="form-control"
+                       step="0.01" min="0" placeholder="29.99" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Stock Quantity *</label>
+                <input type="number" th:field="*{stockQuantity}" class="form-control"
+                       min="0" placeholder="100" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Category</label>
+                <input type="text" th:field="*{category}" class="form-control"
+                       list="categorySuggestions" placeholder="Electronics, Fashion...">
+                <datalist id="categorySuggestions">
+                  <option th:each="cat : ${categories}" th:value="${cat}"></option>
+                </datalist>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Image URL</label>
+                <input type="url" th:field="*{imageUrl}" class="form-control"
+                       placeholder="https://..." id="imageUrlInput"
+                       oninput="previewImage(this.value)">
+              </div>
+
+              <div class="form-group" style="grid-column:1/-1">
+                <label class="form-label">Description</label>
+                <textarea th:field="*{description}" class="form-control" rows="4"
+                          placeholder="Describe this product..."></textarea>
+              </div>
+            </div>
+
+            <div class="flex-gap mt-2">
+              <button type="submit" class="btn btn-primary btn-lg">
+                <span th:text="${product.id != null} ? 'Update Product' : 'Create Product'">Save</span>
+              </button>
+              <a th:href="@{/admin/products}" class="btn btn-outline btn-lg">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Image Preview -->
+      <div class="card fade-in">
+        <div class="card-header"><h4>Preview</h4></div>
+        <div style="aspect-ratio:4/3; background:var(--bg-surface); overflow:hidden">
+          <img id="imagePreview"
+               th:src="${product.imageUrl}"
+               th:if="${product.imageUrl != null}"
+               style="width:100%;height:100%;object-fit:cover">
+          <div class="img-placeholder" style="height:100%" id="imgPlaceholder"
+               th:if="${product.imageUrl == null}">📦</div>
+        </div>
+        <div class="card-body" style="font-size:0.8rem; color:var(--text-muted)">
+          Image preview updates as you type the URL above.
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+function previewImage(url) {
+  const img = document.getElementById('imagePreview');
+  const placeholder = document.getElementById('imgPlaceholder');
+  if (url) {
+    if (!img) {
+      const newImg = document.createElement('img');
+      newImg.id = 'imagePreview';
+      newImg.style = 'width:100%;height:100%;object-fit:cover';
+      document.querySelector('[style*="aspect-ratio"]').prepend(newImg);
+    }
+    document.getElementById('imagePreview').src = url;
+    if (placeholder) placeholder.style.display = 'none';
+  }
+}
+</script>
+</body>
+</html>

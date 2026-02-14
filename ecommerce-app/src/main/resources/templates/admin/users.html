@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Users — Admin NEXUS</title>
+  <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+
+<nav class="navbar">
+  <a th:href="@{/admin}" class="navbar-brand">NEX<span>US</span> <span style="font-size:0.75rem; color:var(--text-muted); font-family:'DM Sans',sans-serif; font-weight:400; margin-left:0.5rem">Admin</span></a>
+  <ul class="navbar-nav">
+    <li><a th:href="@{/shop}" class="nav-link">← Storefront</a></li>
+    <li><a th:href="@{/auth/logout}" class="nav-link">Sign Out</a></li>
+  </ul>
+</nav>
+
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Overview</div>
+      <a th:href="@{/admin}" class="sidebar-link"><span class="icon">📊</span> Dashboard</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Catalog</div>
+      <a th:href="@{/admin/products}" class="sidebar-link"><span class="icon">📦</span> Products</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Commerce</div>
+      <a th:href="@{/admin/orders}" class="sidebar-link"><span class="icon">🛍</span> Orders</a>
+      <a th:href="@{/admin/users}" class="sidebar-link active"><span class="icon">👥</span> Users</a>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="flex-between mb-4">
+      <div>
+        <h2 class="font-serif" style="font-size:1.75rem">Users</h2>
+        <p class="text-secondary text-sm mt-1"><span th:text="${users.size()}"></span> total accounts</p>
+      </div>
+      <a th:href="@{/admin/users/new}" class="btn btn-primary">+ Add User</a>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success fade-in">✓ <span th:text="${success}"></span></div>
+    <div th:if="${error}" class="alert alert-error fade-in">⚠ <span th:text="${error}"></span></div>
+
+    <div class="table-wrap fade-in">
+      <table>
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Phone</th>
+            <th>Joined</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="user : ${users}">
+            <td>
+              <div>
+                <div style="font-weight:600" th:text="${user.fullName}">Name</div>
+                <div class="text-xs text-muted" th:text="'ID: ' + ${user.id}"></div>
+              </div>
+            </td>
+            <td th:text="${user.email}">email</td>
+            <td>
+              <span class="badge"
+                    th:classappend="${user.role.name() == 'ADMIN'} ? 'badge-admin' : 'badge-user'"
+                    th:text="${user.role}">ROLE</span>
+            </td>
+            <td th:text="${user.phone != null ? user.phone : '—'}">—</td>
+            <td th:text="${#temporals.format(user.createdAt, 'MMM d, yyyy')}">Date</td>
+            <td>
+              <span class="badge"
+                    th:classappend="${user.active} ? 'badge-active' : 'badge-inactive'"
+                    th:text="${user.active} ? 'Active' : 'Disabled'"></span>
+            </td>
+            <td>
+              <div class="flex-gap">
+                <a th:href="@{/admin/users/edit/{id}(id=${user.id})}"
+                   class="btn btn-outline btn-sm">Edit</a>
+
+                <form th:action="@{/admin/users/toggle/{id}(id=${user.id})}" method="post" style="display:inline">
+                  <button type="submit" class="btn btn-outline btn-sm"
+                          th:text="${user.active} ? 'Disable' : 'Enable'"></button>
+                </form>
+
+                <form th:action="@{/admin/users/delete/{id}(id=${user.id})}" method="post"
+                      onsubmit="return confirm('Delete this user?')">
+                  <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+</body>
+</html>

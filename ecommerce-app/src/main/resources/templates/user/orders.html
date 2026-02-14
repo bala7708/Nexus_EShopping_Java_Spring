@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <title>My Orders — NEXUS</title>
+  <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+<nav class="navbar">
+  <a th:href="@{/shop}" class="navbar-brand">NEX<span>US</span></a>
+  <ul class="navbar-nav">
+    <li><a th:href="@{/shop}" class="nav-link">Shop</a></li>
+    <li><a th:href="@{/orders}" class="nav-link active">My Orders</a></li>
+    <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/admin}" class="nav-link" style="color:var(--accent-gold)">Admin</a></li>
+    <li><a th:href="@{/auth/logout}" class="nav-link">Sign Out</a></li>
+    <li>
+      <a th:href="@{/cart}" class="nav-cart-btn">🛒 Cart
+        <span class="cart-badge" th:if="${cartCount > 0}" th:text="${cartCount}"></span>
+      </a>
+    </li>
+  </ul>
+</nav>
+<div class="container main-content">
+  <div class="page-header">
+    <h1 class="page-title">My Orders</h1>
+    <p class="page-subtitle"><span th:text="${orders.size()}"></span> orders placed</p>
+  </div>
+  <div th:if="${success}" class="alert alert-success fade-in">🎉 <span th:text="${success}"></span></div>
+
+  <div th:if="${!orders.isEmpty()}">
+    <div class="table-wrap fade-in">
+      <table>
+        <thead><tr>
+          <th>Order</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th><th>Tracking</th><th></th>
+        </tr></thead>
+        <tbody>
+          <tr th:each="order : ${orders}">
+            <td><strong>#<span th:text="${order.id}"></span></strong></td>
+            <td th:text="${#temporals.format(order.createdAt,'MMM d, yyyy')}"></td>
+            <td th:text="${order.items.size()} + ' item(s)'"></td>
+            <td><strong th:text="'$' + ${#numbers.formatDecimal(order.totalAmount,1,2)}"></strong></td>
+            <td><span class="badge" th:classappend="${order.statusBadgeClass}" th:text="${order.status}"></span></td>
+            <td><code style="font-size:0.75rem;color:var(--text-muted)" th:text="${order.trackingNumber}"></code></td>
+            <td><a th:href="@{/orders/{id}(id=${order.id})}" class="btn btn-outline btn-sm">Details</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="empty-state" th:if="${orders.isEmpty()}">
+    <div class="empty-icon">📦</div>
+    <div class="empty-title">No orders yet</div>
+    <p class="empty-desc">Your order history will appear here.</p>
+    <a th:href="@{/shop}" class="btn btn-primary">Start Shopping</a>
+  </div>
+</div>
+</body>
+</html>

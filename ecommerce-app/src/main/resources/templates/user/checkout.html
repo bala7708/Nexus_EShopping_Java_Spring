@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Checkout — NEXUS</title>
+  <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+
+<nav class="navbar">
+  <a th:href="@{/shop}" class="navbar-brand">NEX<span>US</span></a>
+  <ul class="navbar-nav">
+    <li><a th:href="@{/cart}" class="nav-link">← Cart</a></li>
+  </ul>
+</nav>
+
+<!-- Steps bar -->
+<div style="background:var(--bg-card);border-bottom:1px solid var(--border-subtle);padding:0.875rem 0">
+  <div class="container" style="display:flex;align-items:center;gap:0;justify-content:center">
+    <div class="checkout-step done">🛒 Cart</div>
+    <div class="step-arrow">›</div>
+    <div class="checkout-step active">📋 Details</div>
+    <div class="step-arrow">›</div>
+    <div class="checkout-step">✅ Confirm</div>
+  </div>
+</div>
+
+<div class="container main-content">
+  <div th:if="${error}" class="alert alert-error fade-in">⚠ <span th:text="${error}"></span></div>
+
+  <div style="display:grid;grid-template-columns:1fr 360px;gap:2rem;align-items:start">
+
+    <!-- Shipping Form -->
+    <div>
+      <div class="card fade-in">
+        <div class="card-header"><h3>Shipping Address</h3></div>
+        <div class="card-body">
+          <form th:action="@{/cart/checkout}" method="post" id="checkoutForm">
+            <div class="form-group">
+              <label class="form-label">Full Shipping Address *</label>
+              <textarea name="shippingAddress" class="form-control" rows="3"
+                        th:text="${defaultAddress}"
+                        placeholder="e.g. 42 Oak Street, Apt 3B, New York, NY 10001" required></textarea>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card fade-in mt-2">
+        <div class="card-header"><h3>Payment</h3></div>
+        <div class="card-body">
+          <div style="background:var(--bg-surface);border-radius:8px;padding:1.25rem">
+            <div style="font-size:0.75rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1rem">
+              Card Details (Demo Mode)
+            </div>
+            <div class="form-group">
+              <label class="form-label">Card Number</label>
+              <input type="text" class="form-control" value="4242 4242 4242 4242" disabled>
+            </div>
+            <div class="grid-2" style="gap:1rem">
+              <div class="form-group" style="margin-bottom:0">
+                <label class="form-label">Expiry</label>
+                <input type="text" class="form-control" value="12/28" disabled>
+              </div>
+              <div class="form-group" style="margin-bottom:0">
+                <label class="form-label">CVV</label>
+                <input type="text" class="form-control" value="•••" disabled>
+              </div>
+            </div>
+            <div style="margin-top:1rem;padding:0.75rem;background:rgba(201,168,76,0.08);border:1px solid var(--border);border-radius:8px;font-size:0.8rem;color:var(--text-secondary)">
+              ℹ This is a demo. No real payment is processed.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="summary-box" style="position:sticky;top:90px">
+      <h3 style="margin-bottom:1.25rem">Order Summary</h3>
+
+      <div th:each="item : ${cartItems}" class="summary-row">
+        <span style="display:flex;align-items:center;gap:0.5rem;color:var(--text-secondary);font-size:0.85rem">
+          <img th:if="${item.imageUrl != null}" th:src="${item.imageUrl}"
+               style="width:32px;height:32px;border-radius:4px;object-fit:cover">
+          <span>
+            <span th:text="${item.productName}"></span>
+            <span style="color:var(--text-muted)"> ×<span th:text="${item.quantity}"></span></span>
+          </span>
+        </span>
+        <span th:text="'$' + ${#numbers.formatDecimal(item.subtotal,1,2)}"></span>
+      </div>
+
+      <div class="summary-row">
+        <span style="color:var(--text-secondary)">Shipping</span>
+        <span style="color:#50c864">Free</span>
+      </div>
+      <div class="summary-row">
+        <span style="color:var(--text-secondary)">Tax</span>
+        <span style="color:var(--text-muted)">Included</span>
+      </div>
+      <div class="summary-row total">
+        <span>Total</span>
+        <span th:text="'$' + ${#numbers.formatDecimal(cartTotal,1,2)}"></span>
+      </div>
+
+      <button form="checkoutForm" type="submit" class="btn btn-primary btn-full btn-lg mt-2">
+        🔒 Place Order
+      </button>
+      <a th:href="@{/cart}" class="btn btn-outline btn-full mt-1">← Edit Cart</a>
+
+      <div style="text-align:center;margin-top:1rem;font-size:0.75rem;color:var(--text-muted)">
+        By placing your order you agree to our terms.
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

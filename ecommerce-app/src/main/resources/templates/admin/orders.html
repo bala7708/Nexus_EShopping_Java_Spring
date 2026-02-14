@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Orders — Admin NEXUS</title>
+  <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+
+<nav class="navbar">
+  <a th:href="@{/admin}" class="navbar-brand">NEX<span>US</span> <span style="font-size:0.75rem; color:var(--text-muted); font-family:'DM Sans',sans-serif; font-weight:400; margin-left:0.5rem">Admin</span></a>
+  <ul class="navbar-nav">
+    <li><a th:href="@{/shop}" class="nav-link">← Storefront</a></li>
+    <li><a th:href="@{/auth/logout}" class="nav-link">Sign Out</a></li>
+  </ul>
+</nav>
+
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Overview</div>
+      <a th:href="@{/admin}" class="sidebar-link"><span class="icon">📊</span> Dashboard</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Catalog</div>
+      <a th:href="@{/admin/products}" class="sidebar-link"><span class="icon">📦</span> Products</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Commerce</div>
+      <a th:href="@{/admin/orders}" class="sidebar-link active"><span class="icon">🛍</span> Orders</a>
+      <a th:href="@{/admin/users}" class="sidebar-link"><span class="icon">👥</span> Users</a>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="flex-between mb-4">
+      <div>
+        <h2 class="font-serif" style="font-size:1.75rem">Orders</h2>
+        <p class="text-secondary text-sm mt-1"><span th:text="${orders.size()}"></span> total orders</p>
+      </div>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success fade-in">✓ <span th:text="${success}"></span></div>
+
+    <div class="table-wrap fade-in">
+      <table>
+        <thead>
+          <tr>
+            <th>Order #</th>
+            <th>Customer</th>
+            <th>Date</th>
+            <th>Items</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Tracking</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="order : ${orders}">
+            <td><strong>#<span th:text="${order.id}"></span></strong></td>
+            <td>
+              <div style="font-weight:600" th:text="${order.user.fullName}">Name</div>
+              <div class="text-xs text-muted" th:text="${order.user.email}"></div>
+            </td>
+            <td th:text="${#temporals.format(order.createdAt, 'MMM d, yyyy')}"></td>
+            <td th:text="${order.items.size()} + ' item(s)'"></td>
+            <td><strong th:text="'$' + ${#numbers.formatDecimal(order.totalAmount, 1, 2)}"></strong></td>
+            <td>
+              <span class="badge" th:classappend="${order.statusBadgeClass}" th:text="${order.status}"></span>
+            </td>
+            <td>
+              <span style="font-family:monospace; font-size:0.75rem; color:var(--text-muted)"
+                    th:text="${order.trackingNumber}"></span>
+            </td>
+            <td>
+              <a th:href="@{/admin/orders/{id}(id=${order.id})}" class="btn btn-outline btn-sm">Manage</a>
+            </td>
+          </tr>
+          <tr th:if="${orders.isEmpty()}">
+            <td colspan="8" style="text-align:center; color:var(--text-muted); padding:3rem">No orders yet</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+</body>
+</html>

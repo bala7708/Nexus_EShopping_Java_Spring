@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>User Form — Admin NEXUS</title>
+  <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+
+<nav class="navbar">
+  <a th:href="@{/admin}" class="navbar-brand">NEX<span>US</span> <span style="font-size:0.75rem; color:var(--text-muted); font-family:'DM Sans',sans-serif; font-weight:400; margin-left:0.5rem">Admin</span></a>
+  <ul class="navbar-nav">
+    <li><a th:href="@{/admin/users}" class="nav-link">← Users</a></li>
+  </ul>
+</nav>
+
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Overview</div>
+      <a th:href="@{/admin}" class="sidebar-link"><span class="icon">📊</span> Dashboard</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Catalog</div>
+      <a th:href="@{/admin/products}" class="sidebar-link"><span class="icon">📦</span> Products</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Commerce</div>
+      <a th:href="@{/admin/orders}" class="sidebar-link"><span class="icon">🛍</span> Orders</a>
+      <a th:href="@{/admin/users}" class="sidebar-link active"><span class="icon">👥</span> Users</a>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="flex-between mb-4">
+      <h2 class="font-serif" style="font-size:1.75rem"
+          th:text="${user.id != null} ? 'Edit User' : 'New User'">User Form</h2>
+      <a th:href="@{/admin/users}" class="btn btn-outline">Cancel</a>
+    </div>
+
+    <div class="card fade-in" style="max-width:640px">
+      <div class="card-body">
+        <form th:action="${user.id != null} ? @{/admin/users/update/{id}(id=${user.id})} : @{/admin/users/save}"
+              method="post" th:object="${user}">
+
+          <div class="grid-2" style="gap:1rem">
+            <div class="form-group">
+              <label class="form-label">First Name *</label>
+              <input type="text" th:field="*{firstName}" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Last Name *</label>
+              <input type="text" th:field="*{lastName}" class="form-control" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email *</label>
+            <input type="email" th:field="*{email}" class="form-control"
+                   th:readonly="${user.id != null}" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              Password <span class="text-muted" th:if="${user.id != null}">(leave blank to keep current)</span>
+            </label>
+            <input type="password" th:field="*{password}" class="form-control"
+                   th:required="${user.id == null}" placeholder="Min 6 characters">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Phone</label>
+            <input type="tel" th:field="*{phone}" class="form-control" placeholder="+1 555-0000">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Address</label>
+            <textarea th:field="*{address}" class="form-control" rows="2"
+                      placeholder="Street, City, State, ZIP"></textarea>
+          </div>
+
+          <div class="flex-gap mt-2">
+            <button type="submit" class="btn btn-primary btn-lg"
+                    th:text="${user.id != null} ? 'Update User' : 'Create User'">Save</button>
+            <a th:href="@{/admin/users}" class="btn btn-outline btn-lg">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

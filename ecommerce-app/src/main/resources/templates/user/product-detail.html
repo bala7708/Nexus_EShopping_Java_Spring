@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${product.name} + ' — NEXUS'">Product</title>
+  <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+
+<nav class="navbar">
+  <a th:href="@{/shop}" class="navbar-brand">NEX<span>US</span></a>
+  <ul class="navbar-nav">
+    <li><a th:href="@{/shop}" class="nav-link">Shop</a></li>
+    <li sec:authorize="isAuthenticated()"><a th:href="@{/orders}" class="nav-link">My Orders</a></li>
+    <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/admin}" class="nav-link" style="color:var(--accent-gold)">Admin</a></li>
+    <li sec:authorize="isAuthenticated()"><a th:href="@{/auth/logout}" class="nav-link">Sign Out</a></li>
+    <li sec:authorize="!isAuthenticated()"><a th:href="@{/auth/login}" class="nav-link">Sign In</a></li>
+    <li>
+      <a th:href="@{/cart}" class="nav-cart-btn">🛒 Cart
+        <span class="cart-badge" th:if="${cartCount > 0}" th:text="${cartCount}"></span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<div class="container main-content">
+  <div class="breadcrumb">
+    <a th:href="@{/shop}">Shop</a><span class="sep">/</span>
+    <a th:href="@{/shop(category=${product.category})}" th:text="${product.category}">Cat</a><span class="sep">/</span>
+    <span th:text="${product.name}">Product</span>
+  </div>
+
+  <!-- Alerts -->
+  <div th:if="${cartAdded}" class="alert alert-success fade-in">
+    ✓ <strong th:text="${cartAdded}"></strong> added! <a th:href="@{/cart}" style="color:inherit;font-weight:700">View Cart →</a>
+  </div>
+  <div th:if="${error}" class="alert alert-error fade-in" th:text="${error}"></div>
+
+  <div class="product-detail-grid fade-in">
+    <!-- Image -->
+    <div class="product-detail-img">
+      <img th:if="${product.imageUrl != null}" th:src="${product.imageUrl}" th:alt="${product.name}">
+      <div class="img-placeholder" th:if="${product.imageUrl == null}" style="height:420px">📦</div>
+    </div>
+
+    <!-- Info -->
+    <div>
+      <span class="filter-chip" style="cursor:default" th:text="${product.category}">Category</span>
+      <h1 style="font-size:2rem;margin:1rem 0 0.5rem" th:text="${product.name}">Name</h1>
+      <div class="product-detail-price" th:text="'$' + ${#numbers.formatDecimal(product.price,1,2)}">$0</div>
+      <p class="product-detail-desc" th:text="${product.description}">Description</p>
+
+      <!-- In Stock -->
+      <div th:if="${product.stockQuantity > 0}">
+        <div style="font-size:0.85rem;color:#50c864;margin-bottom:1.25rem">
+          ✓ In stock — <span th:text="${product.stockQuantity}"></span> available
+        </div>
+
+        <!-- Quantity + Add to Cart -->
+        <form th:action="@{/cart/add/{id}(id=${product.id})}" method="post" id="addCartForm">
+          <input type="hidden" name="redirectTo" th:value="'/product/' + ${product.id}">
+          <div class="qty-selector">
+            <span class="qty-label">Quantity:</span>
+            <select name="quantity" class="form-control" style="width:80px" id="qtySelect">
+              <option th:each="i : ${#numbers.sequence(1, T(Math).min(product.stockQuantity, 10))}"
+                      th:value="${i}" th:text="${i}">1</option>
+            </select>
+          </div>
+          <div class="flex-gap mb-2">
+            <button type="submit" class="btn btn-outline btn-lg" style="flex:1">
+              🛒 Add to Cart
+            </button>
+          </div>
+        </form>
+
+        <!-- Buy Now -->
+        <form th:action="@{/cart/buy-now/{id}(id=${product.id})}" method="post" id="buyNowForm">
+          <input type="hidden" name="quantity" id="buyNowQty" value="1">
+          <button type="submit" class="btn btn-primary btn-lg btn-full"
+                  sec:authorize="isAuthenticated()"
+                  onclick="document.getElementById('buyNowQty').value = document.getElementById('qtySelect').value">
+            ⚡ Buy Now
+          </button>
+          <a th:href="@{/auth/login}" class="btn btn-primary btn-lg btn-full"
+             sec:authorize="!isAuthenticated()">Sign In to Buy</a>
+        </form>
+
+        <!-- Assurances -->
+        <div style="display:flex;gap:1.5rem;margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border-subtle)">
+          <div style="text-align:center;flex:1">
+            <div style="font-size:1.25rem">🚚</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.25rem">Free Shipping</div>
+          </div>
+          <div style="text-align:center;flex:1">
+            <div style="font-size:1.25rem">🔄</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.25rem">Easy Returns</div>
+          </div>
+          <div style="text-align:center;flex:1">
+            <div style="font-size:1.25rem">🔒</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.25rem">Secure Checkout</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Out of Stock -->
+      <div th:if="${product.stockQuantity == 0}" class="alert alert-error" style="margin-top:1rem">
+        ✕ This item is currently out of stock.
+      </div>
+    </div>
+  </div>
+
+  <!-- Related Products -->
+  <div th:if="${related != null && !related.isEmpty()}" style="margin-top:3rem">
+    <div class="section-heading">
+      <h2>You May Also Like</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="product-grid stagger">
+      <div th:each="rp : ${related}" class="product-card">
+        <a th:href="@{/product/{id}(id=${rp.id})}">
+          <div class="product-img-wrap">
+            <img th:if="${rp.imageUrl != null}" th:src="${rp.imageUrl}" th:alt="${rp.name}" loading="lazy">
+            <div class="img-placeholder" th:if="${rp.imageUrl == null}">📦</div>
+          </div>
+        </a>
+        <div class="product-info">
+          <div class="product-name" th:text="${rp.name}">Name</div>
+          <div class="product-price" th:text="'$' + ${#numbers.formatDecimal(rp.price,1,2)}">$0</div>
+          <div class="product-actions" th:if="${rp.stockQuantity > 0}">
+            <form th:action="@{/cart/add/{id}(id=${rp.id})}" method="post" style="flex:1">
+              <input type="hidden" name="redirectTo" th:value="'/product/' + ${product.id}">
+              <button type="submit" class="btn btn-outline btn-sm btn-full">Add to Cart</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

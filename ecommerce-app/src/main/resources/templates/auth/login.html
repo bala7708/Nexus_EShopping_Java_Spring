@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — NEXUS</title>
+  <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+<div class="auth-wrapper">
+  <div class="auth-card fade-in">
+    <div class="auth-logo">NEXUS</div>
+    <p class="auth-tagline">Curated commerce, elevated.</p>
+
+    <div th:if="${error}" class="alert alert-error">
+      ⚠ <span th:text="${error}">Invalid credentials.</span>
+    </div>
+    <div th:if="${success}" class="alert alert-success">
+      ✓ <span th:text="${success}">Success!</span>
+    </div>
+    <div th:if="${message}" class="alert alert-info">
+      ℹ <span th:text="${message}">Info</span>
+    </div>
+
+    <form th:action="@{/auth/login}" method="post">
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" name="email" class="form-control"
+               placeholder="you@example.com" required autofocus>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-control"
+               placeholder="••••••••" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full btn-lg mt-2">
+        Sign In
+      </button>
+    </form>
+
+    <div class="auth-divider">or</div>
+
+    <div style="text-align:center; font-size:0.875rem; color:var(--text-secondary)">
+      New to NEXUS?
+      <a th:href="@{/auth/register}" style="color:var(--accent-gold); font-weight:600"> Create account →</a>
+    </div>
+
+    <div style="margin-top:1.5rem; padding:1rem; background:var(--bg-surface); border-radius:8px; font-size:0.78rem; color:var(--text-muted)">
+      <strong style="color:var(--text-secondary)">Demo credentials:</strong><br>
+      Admin: admin@shop.com / admin123<br>
+      User: user@shop.com / user123
+    </div>
+  </div>
+</div>
+</body>
+</html>
