@@ -1,9 +1,9 @@
 # Nexus_EShopping_Java_Spring
-NEXUS is a full-stack e-commerce platform built with Java 17 and Spring Boot 3. It features secure authentication with Spring Security, a session-based shopping cart, transactional order processing, and a complete admin dashboard. Designed using layered MVC architecture with JPA/Hibernate and production-oriented backend principles.
+NEXUS is a full-stack e-commerce platform built with Java and Spring Boot 3. It features secure authentication with Spring Security, a session-based shopping cart, transactional order processing, and a complete admin dashboard. Designed using layered MVC architecture with JPA/Hibernate and production-oriented backend principles.
 
 # 🛍️ NEXUS — Spring Boot E-Commerce Platform
 
-> A full-stack e-commerce web application built with **Java 17**, **Spring Boot 3**, **Spring Security**, **JPA/Hibernate**, and **Thymeleaf** — featuring a complete customer storefront, session-based shopping cart, order tracking, and a fully functional admin dashboard.
+> A full-stack e-commerce web application built with **Java**, **Spring Boot 3**, **Spring Security**, **JPA/Hibernate**, and **Thymeleaf** — featuring a complete customer storefront, session-based shopping cart, order tracking, and a fully functional admin dashboard.
 
 ---
 
